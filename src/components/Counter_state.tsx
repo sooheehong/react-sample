@@ -17,3 +17,5 @@ const Counter = (props: CounterProps) => {
         </div>
     )
 }
+
+export default Counter
