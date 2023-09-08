@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useLayoutEffect } from "react"
 
 const UPDATE_CYCLE = 1000
 
@@ -22,7 +22,7 @@ const getLocaleFormString = (text: string) => {
 
 const Clock = () => {
     const [timestamp, setTimestamp] = useState(new Date())
-    const [locale, setLocale] = useState(Locale.US)
+    const [locale, setLocale] = useState<Locale>()
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -34,31 +34,45 @@ const Clock = () => {
         }
     }, [])
 
-    useEffect(() => {
+
+    // useEffect(() => {
+    //     const saveLocale = localStorage.getItem(KEY_LOCALE)
+    //     if (saveLocale !== null) {
+    //         setLocale(getLocaleFormString(saveLocale))
+    //         console.log('setLocale(getLocaleFormString(saveLocale))')
+    //         console.log(getLocaleFormString(saveLocale))
+    //     }
+    // }, [])
+
+    useLayoutEffect(() => {
         const saveLocale = localStorage.getItem(KEY_LOCALE)
-        debugger
         if (saveLocale !== null) {
             setLocale(getLocaleFormString(saveLocale))
             console.log('setLocale(getLocaleFormString(saveLocale))')
+            console.log(getLocaleFormString(saveLocale))
         }
     }, [])
     
     useEffect(() => {
-        localStorage.setItem(KEY_LOCALE, locale)
-        console.log('localStorage.setItem')
+        if (locale) {
+            localStorage.setItem(KEY_LOCALE, locale)
+            console.log('localStorage.setItem')
+            console.log(locale)
+        }
     }, [locale])
 
     return (
         <div>
             <p>
                 <span id="current-time-label">현재 시각</span>
-                <span>:{timestamp.toLocaleDateString(locale)}</span>
+                <span>:{timestamp.toLocaleString(locale)}</span>
                 <select
                     value={locale}
                     onChange={(e) => setLocale(getLocaleFormString(e.target.value))}>
                     <option value="en-US">en-US</option>
                     <option value="ko-KR">ko-KR</option>
                 </select>
+
             </p>
         </div>
     )
